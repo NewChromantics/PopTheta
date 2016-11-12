@@ -51,6 +51,11 @@ namespace PopThetaCommand
 public class PopThetaSession
 {
 	public string	sessionId;
+
+	public PopThetaSession(string _sessionId)
+	{
+		this.sessionId = _sessionId;
+	}
 }
 
 
@@ -69,6 +74,12 @@ public class PopTheta : MonoBehaviour {
 
 	private bool		StartedConnect = false;
 
+	public UnityEngine.Events.UnityEvent	OnSessionStarted;
+	public UnityEngine.Events.UnityEvent	OnSessionEnded;
+
+
+	PopThetaSession		Session;
+
 	void Update () {
 	
 		if (!StartedConnect) {
@@ -82,6 +93,8 @@ public class PopTheta : MonoBehaviour {
 		var Command = new PopThetaCommand.StartSession ();
 		System.Action<PopThetaCommand.StartSessionReply> OnReply = (PopThetaCommand.StartSessionReply Reply) => {
 			Debug.Log ("Reply from start session: sessionid = " + Reply.results.sessionId);
+			Session = new PopThetaSession( Reply.results.sessionId );
+			OnSessionStarted.Invoke();
 		};
 		System.Action<string> OnError = (Error) => {
 			Debug.Log ("Error from start session: " + Error);
